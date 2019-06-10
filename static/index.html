@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>我的生活</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<div class="page-group">
+    <div class="page page-current">
+        <!-- 你的html代码 -->
+        <div content="content" id="contentMp4">
+            <div class="card facebook-card">
+                <div class="card-content">
+                    <video controls="controls" preload="auto" height="100%" width="100%">
+                        <source src="http://localhost:8001/video/dc61ac84b59e44966bd686326484663a.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+        <nav class="bar bar-tab">
+            <div class="row">
+                <div class="col-50"><a onclick="getList()" class="button button-big button-fill button-danger">我的</a></div>
+                <div class="col-50">
+                    <form id="signupListImportForm" enctype="multipart/form-data">
+                        <input type="file" id="btn_file" style="display:none" name="uploadFiles" onchange="postData()"/>
+                    </form>
+                    <a onclick="selectFile()" class="button button-big button-fill button-success">上传</a>
+            </div>
+        </nav>
+    </div>
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        getList();
+    };
+
+    function selectFile() {
+       var file=  document.getElementById("btn_file").click();
+    }
+    function postData() {
+        var file = document.getElementById("btn_file").files[0];
+        var formData = new FormData();
+        formData.append("uploadFile", file);
+        $.ajax({
+            url: "http://127.0.0.1:8001/api/upload",
+            type: "post",
+            data:formData,
+            processData:false,
+            contentType:false,
+            success: function (result) {
+                if (result) {
+                    alert("上传成功");
+                    getList();
+                }
+                console.log(result)
+            }
+        })
+    }
+    function getList() {
+        $.getJSON(
+                "http:127.0.0.1:8001/api/list",
+                function (data) {
+                    let elementById = document.getElementById("contentMp4");
+                    elementById.innerHTML = '';
+                    for (var i = 0; i < data.length; i++) {
+                        elementById.innerHTML += '<div class="card facebook-card">\n' +
+                                '                <div class="card-content">\n' +
+                                '                   <video  controls=controls preload="auto" height="100%" width="100%">\n' +
+                                '                        <source src="'+data[i]+'" type="video/mp4">\n' +
+                                '                    </video>\n' +
+                                '               </div>\n' +
+                                '           </div>\n'
+                    }
+                }
+        )
+    }
+</script>
+<script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+
+</body>
+</html>
